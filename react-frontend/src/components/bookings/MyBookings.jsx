@@ -12,14 +12,13 @@ const MyBookings = () => {
   const fetchBookings = async () => {
     try {
       const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('user_id');
-      if (!token || !userId) {
+      if (!token) {
         setError('User not logged in.');
         setLoading(false);
         return;
       }
 
-      const response = await axios.get(`/api/bookings/user/${userId}`, {
+      const response = await axios.get(`http://localhost:3000/api/bookings/user`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -35,8 +34,14 @@ const MyBookings = () => {
   };
 
   useEffect(() => {
+  fetchBookings();
+
+  const interval = setInterval(() => {
     fetchBookings();
-  }, []);
+  }, 5000); // refresh every 5 seconds
+
+  return () => clearInterval(interval);
+}, []);
 
   const handleCancel = async (bookingId) => {
     try {
@@ -65,17 +70,29 @@ const MyBookings = () => {
     <div className="my-bookings">
       <h2>My Bookings</h2>
       {bookings.map((booking) => (
-        <div key={booking.id} className="booking-card">
-          <p><strong>Train:</strong> {booking.train}</p>
-          <p><strong>Passenger:</strong> {booking.passenger}</p>
-          <p><strong>Seat:</strong> {booking.seat}</p>
-          <p><strong>Payment:</strong> {booking.payment_status}</p>
-          <p><strong>Status:</strong> {booking.status}</p>
-          <button onClick={() => handleCancel(booking.id)} className="cancel-button">
-            Cancel Booking
-          </button>
-        </div>
-      ))}
+  <div key={booking.id} className="booking-card">
+    <p><strong>Train:</strong> {booking.train}</p>
+    <p><strong>Passenger:</strong> {booking.passenger}</p>
+    <p><strong>Age:</strong> {booking.age}</p>
+
+    <p><strong>From:</strong> {booking.passenger_from_station}</p>
+    <p><strong>To:</strong> {booking.passenger_to_station}</p>
+    <p><strong>Journey Date:</strong> {booking.journey_date}</p>
+
+    <p><strong>Class:</strong> {booking.class_type}</p>
+    <p><strong>Seat:</strong> {booking.seat}</p>
+    <p><strong>Payment:</strong> {booking.payment_status}</p>
+    <p><strong>Status:</strong> {booking.status}</p>
+
+    <button
+      disabled={booking.status === "canceled"}
+      onClick={() => handleCancel(booking.id)}
+      className="cancel-button"
+    >
+      Cancel Booking
+    </button>
+  </div>
+))}
       
     </div>
   );

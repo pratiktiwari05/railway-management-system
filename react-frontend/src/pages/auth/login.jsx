@@ -60,25 +60,6 @@ function Login({ setUser }) {
         backgroundPosition: 'center',
       }}
     >
-      <button
-        onClick={() => navigate('/admin')}
-        style={{
-          position: 'absolute',
-          top: '20px',
-          right: '30px',
-          backgroundColor: '#007bff',
-          color: 'white',
-          padding: '10px 18px',
-          borderRadius: '8px',
-          fontWeight: '600',
-          border: 'none',
-          cursor: 'pointer',
-          boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-          zIndex: 1000,
-        }}
-      >
-        Admin Login
-      </button>
 
       <div className="login-form-box">
         <h2>Login</h2>

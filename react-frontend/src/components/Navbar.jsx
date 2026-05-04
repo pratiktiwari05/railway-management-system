@@ -32,11 +32,6 @@ const Navbar = ({ user, timer = 0, onPayment = () => {}, onLogout = () => {} }) 
             🏠 Home
           </button>
 
-          {/* ✅ About Developer Button - Always visible */}
-          <button onClick={() => navigate('/about')} className="home-button">
-            👨‍💻 About Developer
-          </button>
-
           {location.pathname === '/admin' && (
             <button onClick={() => navigate('/login')} className="home-button">
               👤 User Login
@@ -46,18 +41,18 @@ const Navbar = ({ user, timer = 0, onPayment = () => {}, onLogout = () => {} }) 
           {!isAdminRoute && user && location.pathname !== '/login' && location.pathname !== '/register' && (
             <>
               <button onClick={() => navigate('/mybookings')} className="home-button">
-                📑 My Bookings
+                 My Bookings
               </button>
 
               <button onClick={() => navigate('/coach-position')} className="home-button">
-                🚉 Coach Position
+                 Coach Position
               </button>
             </>
           )}
 
           {!isAdminRoute && user && location.pathname === '/profile' && (
             <button onClick={() => navigate('/changepassword')} className="home-button">
-              🔒 Change Password
+               Change Password
             </button>
           )}
         </div>
@@ -77,12 +72,12 @@ const Navbar = ({ user, timer = 0, onPayment = () => {}, onLogout = () => {} }) 
               onClick={() => navigate('/profile')}
               title="Go to Profile"
             >
-              👤 {user.username}
+               {user.username}
             </span>
 
             {timer > 0 && (
               <span className="timer-nav">
-                ⏱ {formatTime(timer)}
+                 {formatTime(timer)}
                 <button className="pay-btn" onClick={() => navigate('/dummy-payment')}>
                   Make Payment
                 </button>
@@ -92,7 +87,7 @@ const Navbar = ({ user, timer = 0, onPayment = () => {}, onLogout = () => {} }) 
             <button onClick={onLogout} className="logout-btn">Logout</button>
           </>
         )}
-      </div>
+      </div>  
     </nav>
   );
 };

@@ -20,7 +20,12 @@ const Homepage = () => {
   });
   const [timer, setTimer] = useState(0);
   const [bookingId, setBookingId] = useState(null);
-
+const fetchTrains = () => {
+  fetch('http://localhost:3000/api/trains')
+    .then((res) => res.json())
+    .then((data) => setTrains(data))
+    .catch((err) => console.error('Failed to fetch trains', err));
+};
   const filteredTrains = trains.filter(
     (train) =>
       train.from_station.toLowerCase() === formData.fromStation.toLowerCase() &&
@@ -46,11 +51,16 @@ const Homepage = () => {
   }, [navigate]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/trains')
-      .then((res) => res.json())
-      .then((data) => setTrains(data))
-      .catch((err) => console.error('Failed to fetch trains', err));
-  }, []);
+  fetchTrains();
+}, []);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    fetchTrains();
+  }, 10000); // every 10 seconds
+
+  return () => clearInterval(interval);
+}, []);
 
   useEffect(() => {
     if (timer <= 0) return;
@@ -101,7 +111,7 @@ const Homepage = () => {
 
     const bookingData = {
       trainId: train.id,
-      train: train.name,
+      train: train.train_name,
       passenger: name,
       age,
       journeyDate: date,
@@ -126,6 +136,7 @@ const Homepage = () => {
       setBookingId(result.booking.id);
       localStorage.setItem('bookingId', result.booking.id);
       setTimer(1800);
+      fetchTrains();
       toast.info('Booking started. Please pay within 30 minutes.', { autoClose: 3000 });
     } catch (err) {
       alert('Booking error: ' + err.message);
@@ -164,7 +175,7 @@ const Homepage = () => {
           <div className="train-cards-container">
             {filteredTrains.map((train) => (
               <div key={train.id} className="train-card">
-                <h3>{train.name}</h3>
+                <h3>{train.train_name}</h3>
                 <p>{train.from_station} ➡ {train.to_station}</p>
                 <p>SL: {train.sl_seats} | 3AC: {train.ac3_seats} | 2AC: {train.ac2_seats} | 1AC: {train.ac1_seats}</p>
                 <button onClick={() => setFormData((prev) => ({ ...prev, trainId: train.id.toString() }))}>
@@ -184,9 +195,9 @@ const Homepage = () => {
         </div>
       )}
 
-      <footer className="homepage-footer">
+      {/* <footer className="homepage-footer">
         Crafted with <span style={{ color: 'red' }}>❤️</span> by <strong style={{color:'yellow'}}>Pratik Tiwari</strong>
-      </footer>
+      </footer> */}
     </div>
   );
 };

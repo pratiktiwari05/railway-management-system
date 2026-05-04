@@ -13,7 +13,7 @@ const CoachPosition = () => {
     setCoachData(null);
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:3000/api/coach-position/${trainNo}`);
+      const response = await axios.get(`http://localhost:3000/api/coach/${trainNo}`)
       const sortedCoaches = response.data.Coaches.sort((a, b) => parseInt(a.SerialNo) - parseInt(b.SerialNo));
       setCoachData({ ...response.data, Coaches: sortedCoaches });
     } catch (err) {

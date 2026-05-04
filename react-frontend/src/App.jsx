@@ -10,11 +10,6 @@ import DummyPayment from './components/bookings/DummyPayment';
 import ProfileCard from './components/users/ProfileCard';
 import ChangePassword from './components/users/changePassword';
 import CoachPosition from './components/trainfeatures/CoachPosition';
-import AdminDashboard from './components/admin/AdminDashboard';
-import AdminLogin from'./components/admin/AdminLogin';
-import AllBookings from './components/admin/AllBookings';
-import AdminTrain from './components/admin/AdminTrain';
-import AboutDeveloper from './components/About/about';
 const App = () => {
   const [user, setUser] = useState(null);
   const [timer, setTimer] = useState(0);
@@ -23,31 +18,34 @@ const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const expiry = payload.exp * 1000;
-        if (Date.now() > expiry) {
-          localStorage.removeItem('token');
-          setUser(null);
-        } else {
-          setUser({
-            id: payload.id,
-            username: payload.username,
-            joined: new Date(payload.iat * 1000).toLocaleDateString(),
-          });
-        }
-      } catch (err) {
-        console.error("JWT decode error:", err);
+  const token = localStorage.getItem('token');
+
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp * 1000;
+
+      if (Date.now() > expiry) {
         localStorage.removeItem('token');
         setUser(null);
+      } else {
+        setUser({
+          id: payload.id,
+          username: payload.username,
+          joined: new Date(payload.iat * 1000).toLocaleDateString(),
+        });
       }
-    } else {
+    } catch (err) {
+      console.error("JWT decode error:", err);
+      localStorage.removeItem('token');
       setUser(null);
     }
-    setLoading(false);
-  }, [localStorage.getItem('token')]);
+  } else {
+    setUser(null);
+  }
+
+  setLoading(false);
+}, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -73,18 +71,17 @@ const App = () => {
     }
   };
 
-  if (loading) return null;
+ if (loading) return <p>Loading...</p>;
 
   return (
     <>
       <Navbar user={user} timer={timer} onLogout={handleLogout} onPayment={handlePayment} />
       <Routes>
-        <Route path="/about" element={<AboutDeveloper />} />
-        {/* 🔐 Auth Routes */}
+        {/*  Auth Routes */}
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/register" element={user ? <Navigate to="/homepage" /> : <Register />} />
 
-        {/* 👤 Protected User Routes */}
+        {/*  Protected User Routes */}
         <Route path="/homepage" element={user ? (
           <Homepage user={user} setUser={setUser} setTimer={setTimer} setBookingId={setBookingId} />
         ) : <Navigate to="/login" />} />
@@ -93,19 +90,12 @@ const App = () => {
         <Route path="/profile" element={user ? <ProfileCard user={user} /> : <Navigate to="/login" />} />
         <Route path="/changepassword" element={user ? <ChangePassword /> : <Navigate to="/login" />} />
 
-        {/* 🧑‍💼 Admin Routes */}
-        <Route path="/admin" element={<AdminLogin />} />
-        <Route path="/admin-dashboard" element={
-          localStorage.getItem('adminToken') ? <AdminDashboard /> : <Navigate to="/admin" />
-        } />
-        <Route path="/admin/bookings" element={<AllBookings />} />
-        <Route path="/admin/trains" element={<AdminTrain />} />
-
-        {/* 🚉 General / Utility Routes */}
+      
+        {/*  General / Utility Routes */}
         <Route path="/coach-position" element={<CoachPosition />} />
         <Route path="/dummy-payment" element={<DummyPayment />} />
 
-        {/* 🏠 Root Redirect */}
+        {/*  Root Redirect */}
         <Route path="/" element={<Navigate to={user ? '/homepage' : '/login'} />} />
 
       </Routes>
