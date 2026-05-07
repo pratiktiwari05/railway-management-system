@@ -1,30 +1,50 @@
-🚆 Yatra Guide – Smart Railway Reservation System
-👨‍💻 Team Members
-Pratik Tiwari
-Nishant Mishra
-Markanday Bhardwaj
-Mantavya Kumar
-📌 Project Overview
+# 🚆 Yatra Guide – Smart Railway Reservation System
 
-Yatra Guide is a smart railway reservation system designed to solve the common problem of seat blocking caused by incomplete payment transactions.
+## 👨‍💻 Team Members
 
-The system introduces an automated cancellation mechanism that releases seats after a fixed timeout, ensuring efficient seat utilization and real-time availability.
+- Pratik Tiwari
+- Nishant Mishra
+- Markanday Bhardwaj
+- Mantavya Kumar
 
-⚙️ Key Features
-🔐 User Authentication (Register/Login with JWT)
-🎫 Train Booking System
-⏱️ Auto-Cancellation of Unpaid Bookings (3-minute timeout)
-💺 Seat Restoration Logic (SL, 3AC, 2AC, 1AC)
-📊 Real-time Seat Availability
-🧠 Scheduler using node-cron
-🗄️ MySQL Database Integration
-🏗️ Tech Stack
-Layer	Technology
-Frontend	React.js
-Backend	Node.js + Express
-Database	MySQL
-Scheduler	node-cron
-Auth	JWT + bcrypt
+---
+
+# 📌 Project Overview
+
+Yatra Guide is a smart railway reservation system developed to solve the problem of temporary seat blocking caused by incomplete or failed payment transactions.
+
+The system introduces an automatic seat cancellation and restoration mechanism that releases reserved seats after a fixed timeout period. This improves seat utilization and maintains real-time availability.
+
+---
+
+# ⚙️ Key Features
+
+- 🔐 User Authentication using JWT
+- 🎫 Train Booking System
+- ⏱️ Auto-Cancellation of Unpaid Bookings
+- 💺 Automatic Seat Restoration
+- 📊 Real-Time Seat Availability
+- 🧠 Scheduler using node-cron
+- 🗄️ MySQL Database Integration
+- 🏗️ Modular Client–Server Architecture
+
+---
+
+# 🛠️ Tech Stack
+
+| Layer | Technology |
+|------|------------|
+| Frontend | React.js |
+| Backend | Node.js + Express.js |
+| Database | MySQL |
+| Scheduler | node-cron |
+| Authentication | JWT + bcrypt |
+
+---
+
+# 📂 Project Structure
+
+```text
 yatra-guide/
 │
 ├── backend/
@@ -57,15 +77,24 @@ yatra-guide/
 │
 └── README.md
 
-🗄️ Database Schema
-1. Users Table
+# 🗄️ Database Schema
+
+## Users Table
+
+```sql
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(100),
   email VARCHAR(100) UNIQUE,
   password VARCHAR(255)
 );
-2. Trains Table
+```
+
+---
+
+## Trains Table
+
+```sql
 CREATE TABLE trains (
   id INT AUTO_INCREMENT PRIMARY KEY,
   train_name VARCHAR(100),
@@ -77,48 +106,95 @@ CREATE TABLE trains (
   ac2_seats INT,
   ac1_seats INT
 );
-3. Bookings Table
+```
+
+---
+
+## Bookings Table
+
+```sql
 CREATE TABLE bookings (
   id INT AUTO_INCREMENT PRIMARY KEY,
+
   trainId INT,
   train VARCHAR(100),
+
   passenger VARCHAR(100),
   seat VARCHAR(20),
+
   user_id INT,
+
   payment_status VARCHAR(20) DEFAULT 'pending',
   class_type VARCHAR(10),
+
   age INT,
+
   passenger_from_station VARCHAR(100),
   passenger_to_station VARCHAR(100),
+
   journey_date DATE,
+
   status VARCHAR(20) DEFAULT 'active',
+
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
   FOREIGN KEY (trainId) REFERENCES trains(id)
 );
+```
 
-🔁 Auto-Cancellation Logic
-Every 1 minute, the scheduler runs
-If:
+---
+
+# 🔁 Auto-Cancellation Logic
+
+The scheduler runs automatically using `node-cron`.
+
+## Conditions Checked
+
+```sql
 payment_status = 'pending'
 status = 'active'
 created_at < NOW() - INTERVAL 3 MINUTE
+```
 
-👉 Then:
+## Actions Performed
 
-Booking → cancelled
-Seat → restored in trains table
-🚀 How to Run the Project
-🔧 Prerequisites
-Node.js installed
-MySQL installed
-Git installed
-📥 Step 1: Clone the Repository
+- Booking status updated to `cancelled`
+- Seat restored in `trains` table
+- Seat availability updated automatically
+
+---
+
+# 🚀 How to Run the Project
+
+## 🔧 Prerequisites
+
+- Node.js
+- MySQL
+- Git
+
+---
+
+## 📥 Step 1: Clone Repository
+
+```bash
 git clone https://github.com/your-username/yatra-guide.git
+
 cd yatra-guide
-⚙️ Step 2: Setup Backend
+```
+
+---
+
+## ⚙️ Step 2: Setup Backend
+
+```bash
 cd backend
+
 npm install
-Configure DB (config/db.js)
+```
+
+### Configure Database (`config/db.js`)
+
+```javascript
 const mysql = require('mysql2');
 
 const db = mysql.createPool({
@@ -129,45 +205,77 @@ const db = mysql.createPool({
 });
 
 module.exports = db.promise();
-🗄️ Step 3: Setup Database
+```
+
+---
+
+## 🗄️ Step 3: Setup Database
 
 Open MySQL and run:
 
+```sql
 CREATE DATABASE railway_db;
+
 USE railway_db;
+```
 
-/* Run all table creation queries here */
-▶️ Step 4: Start Backend
+Then execute all table creation queries.
+
+---
+
+## ▶️ Step 4: Start Backend
+
+```bash
 node index.js
+```
 
-You should see:
+Expected Output:
 
+```text
 🚆 Server running on http://localhost:3000
-🌐 Step 5: Setup Frontend
+```
+
+---
+
+## 🌐 Step 5: Start Frontend
+
+```bash
 cd ../frontend
+
 npm install
+
 npm start
-📊 Testing Auto-Cancellation
-Create booking with payment_status = pending
-Wait 3 minutes
-Scheduler will:
-Cancel booking
-Restore seat
-Log SRL in terminal
-📈 Performance Metrics
-Seat Restoration Latency (SRL): 4–19 ms
-Cancellation Delay: 180–200 sec
-Stable performance across 10, 50, 100 requests
-📌 Future Enhancements
-Cloud Deployment (AWS / GCP)
-Load Balancer Integration
-Redis + Bull Queue (parallel jobs)
-Kafka/RabbitMQ (event-driven system)
-Database Replication
- Acknowledgement
-Crafted with ❤️ by Team Yatra Guide
-📬 Contact
+```
 
-For queries or collaboration:
+---
 
-Pratik Tiwari
+# 📊 Testing Auto-Cancellation
+
+1. Create a booking with:
+   - `payment_status = 'pending'`
+
+2. Wait for 3 minutes
+
+3. Scheduler automatically:
+   - Cancels booking
+   - Restores seats
+   - Updates database records
+
+---
+
+# 📈 Performance Metrics
+
+| Metric | Result |
+|---|---|
+| Seat Restoration Latency (SRL) | 4–19 ms |
+| Cancellation Timeout | 180–200 sec |
+| Booking Response | Stable during testing |
+
+---
+
+# 📌 Future Enhancements
+
+- ☁️ Cloud Deployment (AWS / GCP)
+- ⚖️ Load Balancer Integration
+- 🗃️ Database Replication
+- 📱 Mobile Application Support
